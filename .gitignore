@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data (SQLite databases)
+data/
+
+# Environment variables
+.env
+
+# Logs
+log/
+
+# Cursor
+# .cursor/ 全部纳入版本管理
+
+# IDE
+.idea/
+.vscode/

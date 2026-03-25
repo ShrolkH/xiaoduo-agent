@@ -1,0 +1,404 @@
+"""HR 相关响应 Schema — 查询结果的 Pydantic 模型"""
+
+import datetime as dt
+from decimal import Decimal
+
+from pydantic import BaseModel, Field
+
+
+class EmployeeInfoResponse(BaseModel):
+    """员工基本信息"""
+
+    employee_id: int = Field(description="员工 ID")
+    name: str = Field(description="姓名")
+    employee_no: str = Field(description="工号")
+    department: str | None = Field(default=None, description="部门名称")
+    position: str = Field(description="职位")
+    level: str = Field(description="职级")
+    hire_date: dt.date | None = Field(default=None, description="入职日期")
+    status: str = Field(description="在职状态")
+
+
+class SalaryRecordResponse(BaseModel):
+    """薪资明细"""
+
+    year_month: str = Field(description="年月，格式 YYYY-MM")
+    base_salary: Decimal = Field(description="基本工资")
+    bonus: Decimal = Field(description="奖金")
+    allowance: Decimal = Field(description="津贴")
+    deduction: Decimal = Field(description="扣款")
+    social_insurance: Decimal = Field(description="社保个人缴纳")
+    housing_fund: Decimal = Field(description="公积金个人缴纳")
+    tax: Decimal = Field(description="个人所得税")
+    net_salary: Decimal = Field(description="实发工资")
+
+
+class SocialInsuranceResponse(BaseModel):
+    """五险一金缴纳明细"""
+
+    year_month: str = Field(description="年月，格式 YYYY-MM")
+    pension: Decimal = Field(description="养老保险（个人）")
+    medical: Decimal = Field(description="医疗保险（个人）")
+    unemployment: Decimal = Field(description="失业保险（个人）")
+    housing_fund: Decimal = Field(description="公积金（个人）")
+    pension_company: Decimal = Field(description="养老保险（公司）")
+    medical_company: Decimal = Field(description="医疗保险（公司）")
+    unemployment_company: Decimal = Field(description="失业保险（公司）")
+    injury_company: Decimal = Field(description="工伤保险（公司）")
+    maternity_company: Decimal = Field(description="生育保险（公司）")
+    housing_fund_company: Decimal = Field(description="公积金（公司）")
+
+
+class AttendanceResponse(BaseModel):
+    """考勤记录"""
+
+    date: dt.date = Field(description="考勤日期")
+    check_in: dt.time | None = Field(default=None, description="签到时间")
+    check_out: dt.time | None = Field(default=None, description="签退时间")
+    status: str = Field(description="考勤状态")
+    remark: str = Field(description="备注")
+
+
+class LeaveBalanceResponse(BaseModel):
+    """假期余额"""
+
+    leave_type: str = Field(description="假期类型")
+    total_days: Decimal = Field(description="总天数")
+    used_days: Decimal = Field(description="已用天数")
+    remaining_days: Decimal = Field(description="剩余天数")
+
+
+class LeaveRequestResponse(BaseModel):
+    """请假记录"""
+
+    leave_type: str = Field(description="假期类型")
+    start_date: dt.date = Field(description="开始日期")
+    end_date: dt.date = Field(description="结束日期")
+    days: Decimal = Field(description="请假天数")
+    reason: str = Field(description="请假事由")
+    status: str = Field(description="审批状态")
+
+
+class OvertimeRecordResponse(BaseModel):
+    """加班记录"""
+
+    date: dt.date = Field(description="加班日期")
+    start_time: dt.time = Field(description="开始时间")
+    end_time: dt.time = Field(description="结束时间")
+    hours: Decimal = Field(description="加班时长（小时）")
+    type: str = Field(description="加班类型")
+    status: str = Field(description="审批状态")
+
+
+class ActionResponse(BaseModel):
+    """业务办理 Action 响应"""
+
+    type: str = Field(default="redirect", description="动作类型")
+    url: str = Field(description="跳转目标 URL")
+    message: str = Field(description="提示信息")
+
+
+# ── 主管相关 Schema ──────────────────────────────────────────
+
+
+class TeamMemberResponse(BaseModel):
+    """团队成员信息"""
+
+    employee_id: int = Field(description="员工 ID")
+    name: str = Field(description="姓名")
+    employee_no: str = Field(description="工号")
+    department: str | None = Field(default=None, description="部门名称")
+    position: str = Field(description="职位")
+    level: str = Field(description="职级")
+    status: str = Field(description="在职状态")
+
+
+class TeamAttendanceResponse(BaseModel):
+    """团队考勤记录（含员工姓名）"""
+
+    employee_id: int = Field(description="员工 ID")
+    employee_name: str = Field(description="员工姓名")
+    date: dt.date = Field(description="考勤日期")
+    check_in: dt.time | None = Field(default=None, description="签到时间")
+    check_out: dt.time | None = Field(default=None, description="签退时间")
+    status: str = Field(description="考勤状态")
+    remark: str = Field(description="备注")
+
+
+class TeamLeaveRequestResponse(BaseModel):
+    """团队请假记录（含员工姓名和 request_id）"""
+
+    request_id: int = Field(description="请假申请 ID")
+    employee_id: int = Field(description="员工 ID")
+    employee_name: str = Field(description="员工姓名")
+    leave_type: str = Field(description="假期类型")
+    start_date: dt.date = Field(description="开始日期")
+    end_date: dt.date = Field(description="结束日期")
+    days: Decimal = Field(description="请假天数")
+    reason: str = Field(description="请假事由")
+    status: str = Field(description="审批状态")
+
+
+class TeamLeaveBalanceResponse(BaseModel):
+    """团队假期余额（含员工姓名）"""
+
+    employee_id: int = Field(description="员工 ID")
+    employee_name: str = Field(description="员工姓名")
+    leave_type: str = Field(description="假期类型")
+    total_days: Decimal = Field(description="总天数")
+    used_days: Decimal = Field(description="已用天数")
+    remaining_days: Decimal = Field(description="剩余天数")
+
+
+class TeamOvertimeRecordResponse(BaseModel):
+    """团队加班记录（含员工姓名和 record_id）"""
+
+    record_id: int = Field(description="加班记录 ID")
+    employee_id: int = Field(description="员工 ID")
+    employee_name: str = Field(description="员工姓名")
+    date: dt.date = Field(description="加班日期")
+    start_time: dt.time = Field(description="开始时间")
+    end_time: dt.time = Field(description="结束时间")
+    hours: Decimal = Field(description="加班时长（小时）")
+    type: str = Field(description="加班类型")
+    status: str = Field(description="审批状态")
+
+
+class ApprovalResponse(BaseModel):
+    """审批结果"""
+
+    success: bool = Field(description="是否审批成功")
+    request_id: int | None = Field(default=None, description="关联的申请 ID")
+    action: str | None = Field(default=None, description="审批动作")
+    message: str = Field(description="审批结果说明")
+
+
+class PerformanceReviewResponse(BaseModel):
+    """绩效考评记录"""
+
+    year: int = Field(description="考评年份")
+    half: str = Field(description="上半年/下半年")
+    rating: str = Field(description="评级")
+    score: int = Field(description="评分")
+    reviewer: str = Field(description="评审人")
+    comment: str = Field(description="评语")
+
+
+class EmploymentHistoryResponse(BaseModel):
+    """在职履历记录"""
+
+    start_date: dt.date = Field(description="开始日期")
+    end_date: dt.date | None = Field(default=None, description="结束日期")
+    department: str = Field(description="部门名称")
+    position: str = Field(description="职位")
+    level: str = Field(description="职级")
+    change_type: str = Field(description="变动类型")
+    remark: str = Field(description="备注")
+
+
+class EmployeeProfileResponse(BaseModel):
+    """员工档案（基本信息 + 绩效 + 履历）"""
+
+    info: EmployeeInfoResponse = Field(description="员工基本信息")
+    performance_reviews: list[PerformanceReviewResponse] = Field(description="绩效考评记录列表")
+    employment_histories: list[EmploymentHistoryResponse] = Field(description="在职履历列表")
+
+
+class EmployeeFullProfileResponse(EmployeeProfileResponse):
+    """员工完整档案（含薪资社保，管理者专用）"""
+
+    salary_records: list[SalaryRecordResponse] = Field(description="薪资明细列表")
+    social_insurance_records: list[SocialInsuranceResponse] = Field(description="社保缴纳列表")
+
+
+# ── 管理者汇总报表 Schema ────────────────────────────────────
+
+
+class DepartmentHeadcountResponse(BaseModel):
+    """部门人员统计"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    active_count: int = Field(description="在职人数")
+    probation_count: int = Field(description="试用期人数")
+    total_count: int = Field(description="总人数（在职+试用期）")
+
+
+class AttendanceSummaryResponse(BaseModel):
+    """考勤汇总统计"""
+
+    normal_count: int = Field(description="正常打卡人次")
+    late_count: int = Field(description="迟到人次")
+    early_leave_count: int = Field(description="早退人次")
+    absent_count: int = Field(description="缺卡人次")
+    outside_count: int = Field(description="外勤人次")
+    start_date: dt.date = Field(description="统计起始日期")
+    end_date: dt.date = Field(description="统计截止日期")
+
+
+class SalarySummaryResponse(BaseModel):
+    """部门薪资汇总"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    employee_count: int = Field(description="员工数")
+    total_net_salary: Decimal = Field(description="实发薪资总额")
+    avg_net_salary: Decimal = Field(description="平均实发薪资")
+
+
+class LeaveSummaryResponse(BaseModel):
+    """假期汇总统计"""
+
+    leave_type: str = Field(description="假期类型")
+    total_days_used: Decimal = Field(description="已使用总天数")
+    pending_count: int = Field(description="待审批申请数")
+
+
+# ── 人才发展基础 Schema ──────────────────────────────────────
+
+
+class TrainingResponse(BaseModel):
+    """培训记录"""
+
+    course_name: str = Field(description="课程名称")
+    category: str = Field(description="培训分类")
+    hours: Decimal = Field(description="学时")
+    score: int | None = Field(default=None, description="考试分数")
+    status: str = Field(description="状态")
+    provider: str = Field(description="培训机构/讲师")
+    assigned_by: str = Field(description="指派人")
+    deadline: dt.date | None = Field(default=None, description="截止日期")
+    completed_date: dt.date | None = Field(default=None, description="完成日期")
+
+
+class TalentReviewResponse(BaseModel):
+    """人才盘点记录"""
+
+    review_year: int = Field(description="盘点年度")
+    performance: str = Field(description="绩效维度（高/中/低）")
+    potential: str = Field(description="潜力维度（高/中/低）")
+    nine_grid_pos: str = Field(description="九宫格位置")
+    tag: str = Field(description="人才标签")
+    reviewer: str = Field(description="盘点人")
+    comment: str = Field(description="盘点评语")
+
+
+class DevelopmentPlanResponse(BaseModel):
+    """个人发展计划 (IDP)"""
+
+    plan_year: int = Field(description="计划年度")
+    goal: str = Field(description="发展目标")
+    category: str = Field(description="目标分类")
+    actions: str = Field(description="行动计划")
+    status: str = Field(description="状态")
+    progress: int = Field(description="完成进度百分比")
+    deadline: dt.date = Field(description="截止日期")
+
+
+# ── 人才发展报表 Schema ──────────────────────────────────────
+
+
+class TrainingSummaryResponse(BaseModel):
+    """部门培训统计"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    total_employees: int = Field(description="总员工数")
+    completed_count: int = Field(description="已完成培训人次")
+    completion_rate: float = Field(description="培训完成率")
+    total_hours: float = Field(description="总学时")
+    avg_hours: float = Field(description="人均学时")
+    mandatory_completion_rate: float = Field(description="合规必修完成率")
+
+
+class NineGridDistributionResponse(BaseModel):
+    """九宫格分布"""
+
+    distribution: dict[str, int] = Field(description="各九宫格位置人数")
+    high_potential_employees: list[dict] = Field(description="高潜人才清单")
+
+
+class PerformanceDistributionResponse(BaseModel):
+    """部门绩效分布"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    ratings: dict[str, int] = Field(description="各评级人数")
+    percentages: dict[str, float] = Field(description="各评级占比")
+
+
+class TurnoverAnalysisResponse(BaseModel):
+    """部门人员流动分析"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    total_count: int = Field(description="总人数（含离职）")
+    active_count: int = Field(description="在职人数")
+    resigned_count: int = Field(description="离职人数")
+    turnover_rate: float = Field(description="离职率")
+    probation_conversion_rate: float = Field(description="试用期转正率")
+    avg_tenure_years: float = Field(description="平均司龄（年）")
+
+
+class PromotionStatsResponse(BaseModel):
+    """部门晋升统计"""
+
+    department_id: int = Field(description="部门 ID")
+    department_name: str = Field(description="部门名称")
+    promotion_count: int = Field(description="晋升人数")
+    transfer_in_count: int = Field(description="调入人数")
+    transfer_out_count: int = Field(description="调出人数")
+    promotion_rate: float = Field(description="晋升率")
+
+
+class IdpSummaryResponse(BaseModel):
+    """IDP 汇总统计"""
+
+    total_plans: int = Field(description="总计划数")
+    completed_count: int = Field(description="已完成数")
+    completion_rate: float = Field(description="完成率")
+    avg_progress: float = Field(description="平均进度")
+    category_distribution: dict[str, int] = Field(description="各类目标分布")
+
+
+# ── 人才发现新增基础 Schema ────────────────────────────────────
+
+
+class SkillResponse(BaseModel):
+    """技能标签"""
+
+    name: str = Field(description="技能名称")
+    category: str = Field(description="技能分类（技术/管理/业务/通用）")
+    level: str = Field(description="技能等级（初级/中级/高级/专家）")
+    source: str = Field(description="来源（自评/上级评/认证）")
+    verified: bool = Field(description="是否已确认")
+
+
+class EducationResponse(BaseModel):
+    """教育背景"""
+
+    degree: str = Field(description="学历")
+    major: str = Field(description="专业")
+    school: str = Field(description="院校名称")
+    graduation_year: int = Field(description="毕业年份")
+
+
+class ProjectExperienceResponse(BaseModel):
+    """项目经历"""
+
+    project_name: str = Field(description="项目名称")
+    role: str = Field(description="角色（负责人/核心成员/参与者）")
+    start_date: dt.date = Field(description="开始日期")
+    end_date: dt.date | None = Field(default=None, description="结束日期")
+    description: str = Field(description="项目描述")
+    achievement: str = Field(description="关键成果")
+
+
+class CertificateResponse(BaseModel):
+    """证书认证"""
+
+    name: str = Field(description="证书名称")
+    issuer: str = Field(description="颁发机构")
+    issue_date: dt.date = Field(description="颁发日期")
+    expiry_date: dt.date | None = Field(default=None, description="有效期")
+    category: str = Field(description="证书分类（专业技术/管理/语言/行业）")
